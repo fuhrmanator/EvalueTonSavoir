@@ -17,6 +17,8 @@ import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 
 import ApiService from '../../../services/ApiService';
 
+import renderMathInElement from 'katex/contrib/auto-render';
+
 interface EditQuizParams {
     id: string;
     [key: string]: string | undefined;
@@ -37,7 +39,23 @@ const QuizForm: React.FC = () => {
     const handleSelectFolder = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedFolder(event.target.value);
     };
+    const root = document.getElementById('root');
 
+    /* Cause the math to render via the katex plug-in loaded on the page */
+    // see https://github.com/KaTeX/KaTeX/issues/1649#issuecomment-656776330
+    useEffect(() => {
+        if (root) {
+          renderMathInElement(root, {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '\\[', right: '\\]', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\(', right: '\\)', display: false },
+            ],
+          });
+        }
+      }, [root]);
+        
     useEffect(() => {
         const fetchData = async () => {
             const userFolders = await ApiService.getUserFolders();
@@ -252,3 +270,4 @@ const QuizForm: React.FC = () => {
 };
 
 export default QuizForm;
+
